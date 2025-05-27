@@ -7,10 +7,11 @@ let statsCache = {};
 
 async function scrapeWallboard() {
   try {
-    // Launch Puppeteer with Render-compatible options
+    // Launch Puppeteer with explicit Chromium path and Render-compatible options
     const browser = await puppeteer.launch({
       headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox'], // Required for Render
+      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/opt/render/.cache/puppeteer/chrome/linux-131.0.6778.204/chrome-linux64/chrome',
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
     const page = await browser.newPage();
 
