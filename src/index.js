@@ -1,20 +1,22 @@
 const express = require('express');
 const puppeteer = require('puppeteer');
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 10000;
 
 let statsCache = {};
 
 async function scrapeWallboard() {
   try {
-    const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
+    // Launch Puppeteer with Render-compatible options
+    const browser = await puppeteer.launch({
+      headless: true,
+      args: ['--no-sandbox', '--disable-setuid-sandbox'], // Required for Render
+    });
     const page = await browser.newPage();
 
     await page.goto('https://499977.callswitchone.com/wallboard/tm-statsg', { waitUntil: 'networkidle2' });
 
-    // Add authentication if needed (update with your credentials)
-    // await page.setCookie({ name: 'session', value: 'your-session-token' });
-
+    // Scrape the stats (adjust selectors based on actual HTML structure)
     const stats = await page.evaluate(() => {
       const users = [
         { id: '1005', dashboardId: 'freddie' },
@@ -45,6 +47,7 @@ async function scrapeWallboard() {
   }
 }
 
+// Initial scrape and schedule every 30 seconds
 scrapeWallboard();
 setInterval(scrapeWallboard, 30000);
 
