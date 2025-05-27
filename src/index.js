@@ -7,10 +7,17 @@ let statsCache = {};
 
 async function scrapeWallboard() {
   try {
-    // Launch Puppeteer with explicit Chromium path and Render-compatible options
+    // Debug: Log the executable path and environment variables
+    console.log('PUPPETEER_EXECUTABLE_PATH:', process.env.PUPPETEER_EXECUTABLE_PATH);
+    console.log('PUPPETEER_CACHE_DIR:', process.env.PUPPETEER_CACHE_DIR);
+
+    // Use the environment variable if set, otherwise fallback to default
+    const executablePath = process.env.PUPPETEER_EXECUTABLE_PATH || undefined;
+
+    // Launch Puppeteer with Render-compatible options
     const browser = await puppeteer.launch({
       headless: true,
-      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/opt/render/.cache/puppeteer/chrome/linux-131.0.6778.204/chrome-linux64/chrome',
+      executablePath: executablePath,
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
     const page = await browser.newPage();
